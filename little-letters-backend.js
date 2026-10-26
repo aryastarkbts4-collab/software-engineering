@@ -279,11 +279,15 @@
   });
 
   client.auth.onAuthStateChange(function (event, session) {
-    currentUser = session && session.user || null;
+    const nextUser = session && session.user || null;
+    if (currentUser && (!nextUser || nextUser.id !== currentUser.id)) resetLocalLetter();
+    currentUser = nextUser;
     renderAccount();
   });
   client.auth.getUser().then(function (result) {
-    currentUser = result.data && result.data.user || null;
+    const verifiedUser = result.data && result.data.user || null;
+    if (currentUser && (!verifiedUser || verifiedUser.id !== currentUser.id)) resetLocalLetter();
+    currentUser = verifiedUser;
     renderAccount();
     if (currentUser && document.getElementById('intro').classList.contains('done')) {
       gate.classList.add('hidden');
